@@ -14,6 +14,8 @@ function idUsuario(){
 function listarUsuario(){
 	//O "::" É USADO PARA CHAMAR UMA PUBLIC **"STATIC"**
 	$lista = Usuario::Listar();
+
+	echo "== LISTA DE USUÁRIO == <br><br>";
 	echo json_encode($lista);	
 }
 
@@ -28,13 +30,37 @@ function buscarUsuario(){
 //CARREGA O USUÁRIO USANDO O LOGIN E SENHA
 function loginUsuario(){
 	$usuario = new Usuario();
-	$usuario->Login("gustavo", "gt#123");
+	$usuario->Login("gustavo", "g#123");
+
+	echo $usuario;
+}
+
+
+//INSERINDO UM USUÁRIO NO BD
+function inserirUsuario(){
+	$usuario = new Usuario("MATHEUS", "mt#123");
+	$usuario->Inserir();
+
+	echo "== USUÁRIO ADICIONADO COM SUCESSO! == <br><br>";
+	echo $usuario;
+}
+
+
+//ALTERANDO DADOS DO USUÁRIO NO BD
+function alterarUsuario(){
+	$usuario = new Usuario();
+	$usuario->loadById(2);
+	$usuario->Alterar("GUSTAVO", "gt#123");
+
+	echo "== USUÁRIO ALTERADO COM SUCESSO! == <br><br>";
 	echo $usuario;
 }
 
 //idUsuario();
-//listarUsuario();
+listarUsuario();
 //buscarUsuario();
-loginUsuario();
+//loginUsuario();
+//inserirUsuario();
+//alterarUsuario();
 
 ?>

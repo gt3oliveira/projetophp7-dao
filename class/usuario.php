@@ -39,23 +39,21 @@
 			$this->dtcadastro = $value;
 		}
 
+//===================================================
 		public function loadById($id){
 
 			$sql = new Sql();
 
-			$resultado = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(":ID"=>$id));
+			$results = $sql->select("SELECT * FROM tb_usuarios WHERE idusuario = :ID", array(":ID"=>$id));
 
-			if(count($resultado) > 0){
+			if(count($results) > 0){
 
-				$row = $resultado[0];
+				$this->setDados($results[0]);
 
-				$this->setIdusuario($row['idusuario']);
-				$this->setDeslogin($row['deslogin']);
-				$this->setDessenha($row['dessenha']);
-				$this->setDtcadastro(new DateTime($row['dtcadastro']));
 			}
 		}
 
+//===================================================
 		public static function Listar(){
 
 			$sql = new Sql();
@@ -63,12 +61,14 @@
 			return $sql->select("SELECT * FROM tb_usuarios ORDER BY deslogin;");
 		}
 
+//===================================================
 		public static function Buscar($login){
 
 			$sql = new Sql();
 			return $sql->select("SELECT * FROM tb_usuarios WHERE deslogin LIKE :SEARCH ORDER BY deslogin", array(':SEARCH'=>"%".$login."%"));
 		}
 
+//===================================================
 		public function Login($login, $passaword){
 
 			$sql = new Sql();
@@ -76,12 +76,7 @@
 
 			if (count($results) > 0) {
 
-            	$row = $results[0];
-
-            	$this->setIdusuario($row['idusuario']);
-            	$this->setDeslogin($row['deslogin']);
-            	$this->setDessenha($row['dessenha']);
-            	$this->setDtcadastro(new DateTime($row['dtcadastro']));
+            	$this->setDados($results[0]);
 
         	} else {
 
@@ -91,6 +86,61 @@
 
 		}
 
+//===================================================
+		public function setDados($set_dados){
+
+			$this->setIdusuario($set_dados['idusuario']);
+            $this->setDeslogin($set_dados['deslogin']);
+            $this->setDessenha($set_dados['dessenha']);
+           	$this->setDtcadastro(new DateTime($set_dados['dtcadastro']));
+
+		}
+
+//===================================================
+		public function __construct($login = "", $password = ""){
+
+        $this->setDeslogin($login);
+        $this->setDessenha($password);
+
+    }
+
+//===================================================
+		public function Inserir(){
+
+			$sql = new Sql();
+			$results = $sql->select("CALL sp_usuarios_insert(:LOGIN, :PASSWORD)", array(
+
+            ':LOGIN'=>$this->getDeslogin(),
+            ':PASSWORD'=>$this->getDessenha()
+
+        ));
+
+	if (count($results) > 0) {
+
+            	$this->setDados($results[0]);
+
+        	}
+
+		}
+
+//===================================================
+		public function Alterar($login, $password){
+
+			$this->setDeslogin($login);
+			$this->setDessenha($password);
+
+			$sql = new Sql();
+
+			$sql->execQuery("UPDATE tb_usuarios SET deslogin = :LOGIN, dessenha = :PASSWORD WHERE idusuario = :ID", array(
+
+            ':LOGIN'=>$this->getDeslogin(),
+            ':PASSWORD'=>$this->getDessenha(),
+            ':ID'=>$this->getIdusuario()
+
+			));
+		}
+
+//===================================================
 		public function __toString(){
 
 			return json_encode(array(
