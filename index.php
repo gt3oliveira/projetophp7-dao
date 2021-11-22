@@ -2,18 +2,39 @@
 
 require_once("config.php");
 
-$root = new Usuario();
+//CARREGA UM ÚNICO USUÁRIO DO BD
+function idUsuario(){
+	$root = new Usuario();
+	$root->loadById(6);
+	echo $root;
+}
 
-$root->loadById(6);
 
-echo $root;
+//CARREGA UMA LISTA DE USUÁRIOS
+function listarUsuario(){
+	//O "::" É USADO PARA CHAMAR UMA PUBLIC **"STATIC"**
+	$lista = Usuario::Listar();
+	echo json_encode($lista);	
+}
 
-/*
-$sql = new Sql();
 
-$usuarios = $sql->select("SELECT * from tb_usuarios order by idusuario");
+//CARREGA UMA LISTA DE USUÁRIOS ATRAVÉS DO LOGIN
+function buscarUsuario(){
+	$search = Usuario::Buscar("ma");
+	echo json_encode($search);	
+}
 
-echo json_encode($usuarios);
-*/
+
+//CARREGA O USUÁRIO USANDO O LOGIN E SENHA
+function loginUsuario(){
+	$usuario = new Usuario();
+	$usuario->Login("gustavo", "gt#123");
+	echo $usuario;
+}
+
+//idUsuario();
+//listarUsuario();
+//buscarUsuario();
+loginUsuario();
 
 ?>
